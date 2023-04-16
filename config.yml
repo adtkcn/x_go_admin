@@ -1,0 +1,7 @@
+server:
+  port: 8080
+database:
+  dbname: "x_go_admin"
+  dbuser: "root"
+  dbpassword: "123456789"
+  dbhost: "127.0.0.1:3306"
