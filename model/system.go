@@ -9,8 +9,9 @@ import (
 type User struct {
 	// gorm.Model
 	UserID    int    `gorm:"primaryKey;autoIncrement;not null" json:"user_id"`
-	UserName  string `gorm:"not null;size:50" json:"user_name"`
-	Password  string `gorm:"not null;size:256" json:"password"`
+	UserName  string `gorm:"not null;size:50;uniqueIndex" json:"user_name" form:"user_name"`
+	Password  string `gorm:"not null;size:256" json:"password"  form:"password"`
+	Avatar    string `gorm:"default:'';size:200" json:"avatar" form:"avatar"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
