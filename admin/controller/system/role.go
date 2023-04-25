@@ -1,4 +1,4 @@
-package controller
+package system
 
 import (
 	"x-gin-admin/model"
@@ -6,18 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Role struct {
-	model.Role
-}
+type RoleController struct{}
 
-func (u *Role) GetRoles(c *gin.Context) {
-	var Roles []Role
+func (u *RoleController) GetRoles(c *gin.Context) {
+	var Roles []model.Role
 	model.DB.Find(&Roles)
 	c.JSON(200, Roles)
 }
 
-func (u *Role) CreateRole(c *gin.Context) {
-	var Role Role
+func (u *RoleController) CreateRole(c *gin.Context) {
+	var Role model.Role
 	if err := c.ShouldBindJSON(&Role); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -26,9 +24,9 @@ func (u *Role) CreateRole(c *gin.Context) {
 	c.JSON(201, Role)
 }
 
-func (u *Role) UpdateRole(c *gin.Context) {
+func (u *RoleController) UpdateRole(c *gin.Context) {
 	id := c.Param("id")
-	var Role Role
+	var Role model.Role
 	if err := model.DB.Where("Role_id=?", id).First(&Role).Error; err != nil {
 		c.JSON(404, gin.H{"error": "Role not found"})
 		return
@@ -41,23 +39,13 @@ func (u *Role) UpdateRole(c *gin.Context) {
 	c.JSON(200, Role)
 }
 
-func (u *Role) DeleteRole(c *gin.Context) {
+func (u *RoleController) DeleteRole(c *gin.Context) {
 	id := c.Param("id")
-	var Role Role
+	var Role model.Role
 	if err := model.DB.Where("Role_id=?", id).First(&Role).Error; err != nil {
 		c.JSON(404, gin.H{"error": "Role not found"})
 		return
 	}
 	model.DB.Delete(&Role)
 	c.Status(204)
-}
-
-func RegisterRoleRoutes(r *gin.RouterGroup) {
-	role := Role{}
-	// 子级路由组
-	roleRouter := r.Group("/Role")
-	{
-		roleRouter.GET("/", role.GetRoles)
-
-	}
 }

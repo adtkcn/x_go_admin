@@ -1,8 +1,7 @@
 package main
 
 import (
-	"x-gin-admin/admin"
-	"x-gin-admin/api"
+	"x-gin-admin/routes"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,10 +11,7 @@ func main() {
 
 	server := router.Group("/server")
 	{
-		// var user = controller.User{}
-		admin.RegisterRoutes(server)
-		api.RegisterRoutes(server)
-
+		routes.Use(server)
 	}
 	// router.Static("/", "./public")
 
