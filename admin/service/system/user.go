@@ -10,6 +10,7 @@ import (
 
 type UserService struct{}
 
+// 返回token
 func (u *UserService) Login(username, password string) (string, error) {
 	var user model.User
 	result := model.DB.First(&user, "user_name = ?", username)
@@ -35,7 +36,7 @@ func (u *UserService) Login(username, password string) (string, error) {
 
 }
 
-// 用户相关操作
+// 用户相关信息
 func (u *UserService) GetUserInfo(UserID int) *model.User {
 	if UserID == 0 {
 		return nil

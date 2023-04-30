@@ -1,4 +1,6 @@
 .env
-__debug_bin.exe
+*.exe
 go.sum
 vendor/
+config.yml
+.vscode/

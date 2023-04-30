@@ -9,7 +9,6 @@ func Send(c *gin.Context, message string, data any) {
 		"data":    data,
 	}
 	c.JSON(200, res)
-
 }
 func SendError(c *gin.Context, message string, data any) {
 	var res = &gin.H{
@@ -18,5 +17,4 @@ func SendError(c *gin.Context, message string, data any) {
 		"data":    data,
 	}
 	c.JSON(500, res)
-
 }

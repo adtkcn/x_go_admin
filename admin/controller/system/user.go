@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"x-gin-admin/admin/service/system"
 	"x-gin-admin/model"
+	"x-gin-admin/utils/captcha"
 	"x-gin-admin/utils/jwt"
 	"x-gin-admin/utils/response"
 
@@ -52,6 +53,14 @@ func (u *UserController) Register(c *gin.Context) {
 
 // 用户登录
 func (u *UserController) Login(c *gin.Context) {
+	var verifyID = c.PostForm("verifyID")
+	var verifyCode = c.PostForm("verifyCode")
+
+	isPass := captcha.Verify(verifyID, verifyCode)
+	if !isPass {
+		response.SendError(c, "验证码错误", nil)
+		return
+	}
 	// 解析请求体中的表单数据
 	type Form struct {
 		Username string `form:"username" binding:"required"`

@@ -3,17 +3,19 @@ package handler
 import (
 	"fmt"
 	"log"
-	"x-gin-admin/admin/service/userService"
+	"x-gin-admin/admin/service/system"
 	"x-gin-admin/utils/jwt"
 	"x-gin-admin/utils/response"
 
 	"github.com/gin-gonic/gin"
 )
 
+var userService = system.UserService{}
+
 func GetUserId() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 设置 example 变量
-		var user, err = jwt.ParseToken(c.Query("token"))
+		var user, err = jwt.ParseToken(c.GetHeader("Authorization"))
 		if err != nil {
 			log.Println(err)
 			c.Abort()
@@ -30,6 +32,10 @@ func GetUserId() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+/**
+* 获取UserInfo中间件
+ */
 func GetUserInfo() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -39,6 +45,7 @@ func GetUserInfo() gin.HandlerFunc {
 			response.SendError(c, "未登录", nil)
 			return
 		}
+		// 从mysql获取的，后续改为redis等缓存
 		user := userService.GetUserInfo(UserID)
 		if user == nil {
 			c.Abort()

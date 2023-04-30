@@ -11,9 +11,9 @@ func main() {
 
 	server := router.Group("/server")
 	{
-		routes.Use(server)
+		routes.UseAdmin(server)
 	}
-	// router.Static("/", "./public")
+	router.Static("public", "./public")
 
 	router.Run() // 监听并在 0.0.0.0:8080 上启动服务
 }
