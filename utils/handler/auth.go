@@ -19,12 +19,13 @@ func GetUserId() gin.HandlerFunc {
 		if err != nil {
 			log.Println(err)
 			c.Abort()
-			c.JSON(401, gin.H{"code": "401", "message": "用户未登录"})
+			c.JSON(401, gin.H{"code": "401", "msg": "用户未登录"})
 			return
 		}
 		if user.UserID == 0 {
 			c.Abort()
-			response.SendError(c, "未登录", nil)
+			// response.SendError(c, "未登录", nil)
+			c.JSON(401, gin.H{"code": "401", "msg": "用户未登录"})
 			return
 		}
 		c.Set("UserID", user.UserID)

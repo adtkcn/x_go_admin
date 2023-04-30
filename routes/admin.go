@@ -13,6 +13,14 @@ func UseAdmin(r *gin.RouterGroup) {
 	r.POST("user/Register", user.Register)
 	r.POST("user/Login", user.Login)
 
+	captcha := system.CaptchaController{}
+	r.GET("captcha/Generate", captcha.Generate)
+
+	common := system.CommonController{}
+	r.POST("common/upload", handler.CalculateFileMD5(), common.Upload)
+	r.GET("common/FileByID", common.FileByID)
+	r.GET("common/CopyWithMd5", common.CopyWithMd5)
+
 	/**
 	* 子级路由组
 	* server/admin/
@@ -21,15 +29,12 @@ func UseAdmin(r *gin.RouterGroup) {
 	{
 		// handler.GetUserInfo()
 		admin.GET("user/GetUsers", user.GetUsers)
-
 		admin.POST("user/UpdateUser", user.UpdateUser)
 		admin.POST("user/DeleteUser", user.DeleteUser)
 
 		role := system.RoleController{}
 		admin.GET("role/GetRoles", role.GetRoles)
 
-		captcha := system.CaptchaController{}
-		admin.GET("captcha/Generate", captcha.Generate)
 		// admin.GET("captcha/Verify", captcha.Verify)
 	}
 }

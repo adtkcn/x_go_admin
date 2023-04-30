@@ -56,3 +56,12 @@ type RoleMenu struct {
 	RoleID int `gorm:"primaryKey;not null;comment:角色id" json:"role_id"`
 	MenuID int `gorm:"primaryKey;not null;comment:菜单id" json:"menu_id"`
 }
+
+// 文件表
+type UploadFile struct {
+	gorm.Model
+	Name       string `gorm:"index;not null;comment:原始文件名" json:"name"`
+	Path       string `gorm:"not null;comment:文件路径" json:"path"`
+	Md5        string `gorm:"index;not null;comment:文件md5" json:"md5"` // 相同MD5文件可以做快速上传
+	Permission string `gorm:"not null;comment:权限标识" json:"permission"`
+}

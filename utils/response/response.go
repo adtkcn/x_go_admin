@@ -2,19 +2,19 @@ package response
 
 import "github.com/gin-gonic/gin"
 
-func Send(c *gin.Context, message string, data any) {
+func Send(c *gin.Context, msg string, data any) {
 	var res = &gin.H{
-		"code":    200,
-		"message": message,
-		"data":    data,
+		"code": 200,
+		"msg":  msg,
+		"data": data,
 	}
 	c.JSON(200, res)
 }
-func SendError(c *gin.Context, message string, data any) {
+func SendError(c *gin.Context, msg string, data any) {
 	var res = &gin.H{
-		"code":    500,
-		"message": message,
-		"data":    data,
+		"code": 500,
+		"msg":  msg,
+		"data": data,
 	}
-	c.JSON(500, res)
+	c.JSON(200, res)
 }

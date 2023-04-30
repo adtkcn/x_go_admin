@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var DB *gorm.DB
@@ -20,13 +21,18 @@ func init() {
 
 	fmt.Println("dsn", dsn)
 	var err error
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true, //禁用 AutoMigrate 或 CreateTable 时，GORM 会自动创建外键约束
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix: "x_",
+		},
+	})
 	if err != nil {
 		panic(err)
 	}
 
 	// 创建表结构
-	err = DB.AutoMigrate(&User{}, &Role{}, &UserRole{}, &Permission{}, &RolePermission{}, &Menu{}, &RoleMenu{})
+	err = DB.AutoMigrate(&User{}, &Role{}, &UserRole{}, &Permission{}, &RolePermission{}, &Menu{}, &RoleMenu{}, &UploadFile{})
 	if err != nil {
 		panic(err)
 	}

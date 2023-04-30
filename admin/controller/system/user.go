@@ -1,7 +1,6 @@
 package system
 
 import (
-	"net/http"
 	"x-gin-admin/admin/service/system"
 	"x-gin-admin/model"
 	"x-gin-admin/utils/captcha"
@@ -20,14 +19,14 @@ func (u *UserController) Register(c *gin.Context) {
 	// 解析请求体中的表单数据
 	var user = model.User{}
 	if err := c.ShouldBind(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.SendError(c, err.Error(), nil)
 		return
 	}
 
 	// 将密码加密存储到数据库中
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate password hash"})
+		response.SendError(c, "failed to generate password hash", nil)
 		return
 	}
 
@@ -41,14 +40,14 @@ func (u *UserController) Register(c *gin.Context) {
 		return
 	}
 
-	token, err := jwt.GenerateToken(user.UserID)
+	access_token, err := jwt.GenerateToken(user.UserID)
 	if err != nil {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
 	// 在响应中返回新增的用户
 	// c.JSON(http.StatusOK, gin.H{"user": user, "token": token})
-	response.Send(c, "ok", gin.H{"user": user, "token": token})
+	response.Send(c, "ok", gin.H{"user": user, "access_token": access_token})
 }
 
 // 用户登录
