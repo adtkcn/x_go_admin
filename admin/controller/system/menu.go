@@ -27,18 +27,8 @@ type Route struct {
 	Children  []Route `json:"children"`
 	ParentID  int
 	MenuID    int
+	Index     int `json:"index"`
 }
-
-// func main() {
-//     people := []Person{
-//         {"Alice", 25},
-//         {"Bob", 30},
-//         {"Charlie", 20},
-//         {"David", 35},
-//     }
-//     sort.Sort(ByAge(people))
-//     fmt.Println(people)
-// }
 
 func buildTree(menus []Route, parentID int) []Route {
 	var tree []Route
@@ -68,6 +58,7 @@ func (m *MenuController) GetMenusByUser(c *gin.Context) {
 			Component: menus[i].Component,
 			ParentID:  menus[i].ParentID,
 			MenuID:    menus[i].MenuID,
+			Index:     menus[i].Index,
 			Meta: Meta{
 				Icon:        menus[i].Icon,
 				Title:       menus[i].Title,
@@ -89,14 +80,15 @@ func (m *MenuController) List(c *gin.Context) {
 	var menus []model.Menu
 	model.DB.Find(&menus)
 	sort.Sort(model.Menus(menus))
-	// response.Send(c, "ok", &menus)
-	response.Send(c, "ok", buildTree(menus, 0))
+	response.Send(c, "ok", &menus)
+	// response.Send(c, "ok", buildTree(menus, 0))
 }
 
 func (m *MenuController) Create(c *gin.Context) {
 	var menu model.Menu
-	if err := c.ShouldBindJSON(&menu); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+	if err := c.ShouldBind(&menu); err != nil {
+		// c.JSON(400, gin.H{"error": err.Error()})
+		response.SendError(c, err.Error(), nil)
 		return
 	}
 	model.DB.Create(&menu)
@@ -104,13 +96,13 @@ func (m *MenuController) Create(c *gin.Context) {
 }
 
 func (m *MenuController) Update(c *gin.Context) {
-	id := c.Param("id")
+	id := c.PostForm("menu_id")
 	var menu model.Menu
 	if err := model.DB.Where("menu_id=?", id).First(&menu).Error; err != nil {
 		response.SendError(c, "Menu not found", nil)
 		return
 	}
-	if err := c.ShouldBindJSON(&menu); err != nil {
+	if err := c.ShouldBind(&menu); err != nil {
 
 		response.SendError(c, err.Error(), nil)
 		return
@@ -120,10 +112,9 @@ func (m *MenuController) Update(c *gin.Context) {
 }
 
 func (m *MenuController) Delete(c *gin.Context) {
-	id := c.Param("id")
+	id := c.PostForm("menu_id")
 	var menu model.Menu
 	if err := model.DB.Where("menu_id=?", id).First(&menu).Error; err != nil {
-
 		response.SendError(c, "Menu not found", nil)
 		return
 	}
