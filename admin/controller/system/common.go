@@ -48,6 +48,7 @@ func (common *CommonController) FileByID(c *gin.Context) {
 	c.File(FilePrefix + upload.Path)
 }
 
+// md5复制文件记录
 func (common *CommonController) CopyWithMd5(c *gin.Context) {
 	md5 := c.Query("md5")
 	var upload = model.UploadFile{}

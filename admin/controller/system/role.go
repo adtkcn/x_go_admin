@@ -8,23 +8,23 @@ import (
 
 type RoleController struct{}
 
-func (u *RoleController) GetRoles(c *gin.Context) {
+func (u *RoleController) List(c *gin.Context) {
 	var Roles []model.Role
 	model.DB.Find(&Roles)
 	c.JSON(200, Roles)
 }
 
-func (u *RoleController) CreateRole(c *gin.Context) {
+func (u *RoleController) Create(c *gin.Context) {
 	var Role model.Role
 	if err := c.ShouldBindJSON(&Role); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	model.DB.Create(&Role)
-	c.JSON(201, Role)
+	c.JSON(200, Role)
 }
 
-func (u *RoleController) UpdateRole(c *gin.Context) {
+func (u *RoleController) Update(c *gin.Context) {
 	id := c.Param("id")
 	var Role model.Role
 	if err := model.DB.Where("Role_id=?", id).First(&Role).Error; err != nil {
@@ -39,7 +39,7 @@ func (u *RoleController) UpdateRole(c *gin.Context) {
 	c.JSON(200, Role)
 }
 
-func (u *RoleController) DeleteRole(c *gin.Context) {
+func (u *RoleController) Delete(c *gin.Context) {
 	id := c.Param("id")
 	var Role model.Role
 	if err := model.DB.Where("Role_id=?", id).First(&Role).Error; err != nil {

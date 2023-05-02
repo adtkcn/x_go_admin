@@ -76,7 +76,13 @@ func (u *UserController) Login(c *gin.Context) {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	response.Send(c, "ok", gin.H{"token": token})
+	response.Send(c, "ok", gin.H{"access_token": token})
+}
+
+// 用户登录
+func (u *UserController) Logout(c *gin.Context) {
+
+	response.Send(c, "已退出登录", nil)
 }
 
 // 用户相关操作

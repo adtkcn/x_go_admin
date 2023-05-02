@@ -15,7 +15,7 @@ var userService = system.UserService{}
 func GetUserId() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 设置 example 变量
-		var user, err = jwt.ParseToken(c.GetHeader("Authorization"))
+		var user, err = jwt.ParseToken(c.GetHeader("x-access-token"))
 		if err != nil {
 			log.Println(err)
 			c.Abort()

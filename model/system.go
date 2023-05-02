@@ -44,12 +44,28 @@ type RolePermission struct {
 
 // 菜单
 type Menu struct {
-	MenuID   int    `gorm:"primaryKey;autoIncrement;not null" json:"menu_id"`
-	MenuName string `gorm:"not null;size:50;comment:菜单名称" json:"menu_name"`
-	ParentID int    `gorm:"not null" json:"parent_id"`
-	URL      string `gorm:"not null;size:500" json:"url"`
-	Icon     string `gorm:"default:null;size:20" json:"icon"`
+	MenuID   int `gorm:"primaryKey;autoIncrement;not null" json:"menu_id"`
+	ParentID int `gorm:"default:0;comment:父级" json:"parent_id"`
+	Index    int `gorm:"default:0;comment:排序" json:"index"`
+
+	Path      string `gorm:"default:'';size:500;comment:路由路径" json:"path"`
+	Name      string `gorm:"default:'';size:50;comment:路由名称" json:"name"`
+	Redirect  string `gorm:"default:'';size:500;comment:重定向" json:"redirect"`
+	Component string `gorm:"default:'';size:500;comment:组件路径" json:"component"`
+
+	Icon        string `gorm:"default:'';size:20;comment:菜单图标" json:"icon"`
+	Title       string `gorm:"default:'';size:50;comment:菜单名称" json:"title"`
+	IsLink      int    `gorm:"default:0;size:1;comment:是否link" json:"isLink"`
+	IsHide      int    `gorm:"default:0;size:1;comment:是否隐藏" json:"isHide"`
+	IsFull      int    `gorm:"default:0;size:1;comment:是否全屏(示例：数据大屏页面)" json:"isFull"`
+	IsAffix     int    `gorm:"default:0;size:1;comment:是否固定在 tabs nav" json:"isAffix"`
+	IsKeepAlive int    `gorm:"default:1;size:1;comment:是否缓存" json:"isKeepAlive"`
 }
+type Menus []Menu
+
+func (a Menus) Len() int           { return len(a) }
+func (a Menus) Less(i, j int) bool { return a[i].Index > a[j].Index }
+func (a Menus) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 
 // 角色的菜单
 type RoleMenu struct {
