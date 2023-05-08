@@ -2,6 +2,7 @@ package system
 
 import (
 	"sort"
+	"x-gin-admin/db"
 	"x-gin-admin/model"
 	"x-gin-admin/utils/response"
 
@@ -47,7 +48,7 @@ func buildTree(menus []Route, parentID int) []Route {
 // 获取用户的菜单
 func (m *MenuController) GetMenusByUser(c *gin.Context) {
 	var menus model.Menus
-	model.DB.Find(&menus)
+	db.Sql.Find(&menus)
 	sort.Sort(model.Menus(menus))
 
 	var routes []Route
@@ -78,7 +79,7 @@ func (m *MenuController) GetMenusByUser(c *gin.Context) {
 // 菜单相关操作
 func (m *MenuController) List(c *gin.Context) {
 	var menus []model.Menu
-	model.DB.Find(&menus)
+	db.Sql.Find(&menus)
 	sort.Sort(model.Menus(menus))
 	response.Send(c, "ok", &menus)
 	// response.Send(c, "ok", buildTree(menus, 0))
@@ -91,14 +92,14 @@ func (m *MenuController) Create(c *gin.Context) {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	model.DB.Create(&menu)
+	db.Sql.Create(&menu)
 	response.Send(c, "ok", &menu)
 }
 
 func (m *MenuController) Update(c *gin.Context) {
 	id := c.PostForm("menu_id")
 	var menu model.Menu
-	if err := model.DB.Where("menu_id=?", id).First(&menu).Error; err != nil {
+	if err := db.Sql.Where("menu_id=?", id).First(&menu).Error; err != nil {
 		response.SendError(c, "Menu not found", nil)
 		return
 	}
@@ -107,17 +108,17 @@ func (m *MenuController) Update(c *gin.Context) {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	model.DB.Save(&menu)
+	db.Sql.Save(&menu)
 	response.Send(c, "ok", &menu)
 }
 
 func (m *MenuController) Delete(c *gin.Context) {
 	id := c.PostForm("menu_id")
 	var menu model.Menu
-	if err := model.DB.Where("menu_id=?", id).First(&menu).Error; err != nil {
+	if err := db.Sql.Where("menu_id=?", id).First(&menu).Error; err != nil {
 		response.SendError(c, "Menu not found", nil)
 		return
 	}
-	model.DB.Delete(&menu)
+	db.Sql.Delete(&menu)
 	response.Send(c, "ok", &menu)
 }

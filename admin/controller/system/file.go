@@ -1,6 +1,8 @@
 package system
 
 import (
+	"mime/multipart"
+	"x-gin-admin/db"
 	"x-gin-admin/model"
 	"x-gin-admin/utils/response"
 
@@ -8,25 +10,44 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CommonController struct{}
+type FileController struct{}
 
 var FilePrefix string = "."
 
-func (common *CommonController) Upload(c *gin.Context) {
+// 拼接文件保存路径
+func JoinPath(filename string) string {
+	return "/uploads/" + dayjs.Dayjs().Format("YYYY-MM/DD/HH") + "/" + filename
+}
+
+// 真实路径
+func GetRealPath(savePath string) string {
+	return FilePrefix + savePath
+}
+
+// 保存文件到真实路径
+func SaveFile(c *gin.Context, file *multipart.FileHeader) (savePath string) {
+	savePath = JoinPath(file.Filename)
+
+	c.SaveUploadedFile(file, GetRealPath(savePath))
+	return savePath
+}
+
+func (common *FileController) Upload(c *gin.Context) {
 	file, _ := c.FormFile("file")
 	permission := c.PostForm("permission")
-	var dstDir = "/uploads/" + dayjs.Dayjs().Format("YYYY-MM/DD/HH") + "/" + file.Filename
+	// var dstDir = JoinPath(file.Filename)
+	var savePath = SaveFile(c, file)
 
 	// 上传文件至指定的完整文件路径
-	c.SaveUploadedFile(file, FilePrefix+dstDir)
+	// c.SaveUploadedFile(file, FilePrefix+dstDir)
 
 	var upload = model.UploadFile{
 		Name:       file.Filename,
-		Path:       dstDir,
+		Path:       savePath,
 		Md5:        c.GetString("file_md5"),
 		Permission: permission,
 	}
-	result := model.DB.Create(&upload)
+	result := db.Sql.Create(&upload)
 	if result.Error != nil {
 		response.SendError(c, result.Error.Error(), nil)
 		return
@@ -35,13 +56,13 @@ func (common *CommonController) Upload(c *gin.Context) {
 	response.Send(c, "ok", upload)
 }
 
-func (common *CommonController) FileByID(c *gin.Context) {
+func (common *FileController) FileByID(c *gin.Context) {
 	id := c.Query("id")
 	var upload = model.UploadFile{}
 
-	model.DB.Where("id", id).First(&upload)
+	db.Sql.Where("id", id).First(&upload)
 	if upload.Permission == "" {
-		c.File(FilePrefix + upload.Path)
+		c.File(GetRealPath(upload.Path))
 		return
 	}
 	// todo: 校验用户权限
@@ -49,11 +70,11 @@ func (common *CommonController) FileByID(c *gin.Context) {
 }
 
 // md5复制文件记录
-func (common *CommonController) CopyWithMd5(c *gin.Context) {
+func (common *FileController) UploadWithMd5(c *gin.Context) {
 	md5 := c.Query("md5")
 	var upload = model.UploadFile{}
 
-	model.DB.Where("md5", md5).First(&upload)
+	db.Sql.Where("md5", md5).First(&upload)
 	if upload.ID == 0 {
 		response.SendError(c, "没有记录", nil)
 		return
@@ -62,9 +83,9 @@ func (common *CommonController) CopyWithMd5(c *gin.Context) {
 	newUpload.ID = 0    // 修改ID，使其成为新记录
 	// newUpload.Name = "New Name" // 修改其他字段值
 
-	model.DB.Model(&model.UploadFile{}).Create(&newUpload) // 创建新记录，只复制主记录
+	db.Sql.Model(&model.UploadFile{}).Create(&newUpload) // 创建新记录，只复制主记录
 
-	// model.DB.Create(newUpload)
+	// db.Sql.Create(newUpload)
 
 	response.Send(c, "ok", newUpload)
 }

@@ -1,6 +1,7 @@
 package system
 
 import (
+	"x-gin-admin/db"
 	"x-gin-admin/model"
 	"x-gin-admin/utils/response"
 
@@ -12,7 +13,7 @@ type PermissionController struct{}
 // 获取用户的权限
 func (p *PermissionController) GetUserPermission(c *gin.Context) {
 	var permissions []model.Permission
-	model.DB.Find(&permissions)
+	db.Sql.Find(&permissions)
 
 	response.Send(c, "ok", &gin.H{
 		"useProTable": []string{"add", "batchAdd", "export", "batchDelete", "status"},
@@ -23,7 +24,7 @@ func (p *PermissionController) GetUserPermission(c *gin.Context) {
 // 权限相关操作
 func (p *PermissionController) List(c *gin.Context) {
 	var permissions []model.Permission
-	model.DB.Find(&permissions)
+	db.Sql.Find(&permissions)
 
 	response.Send(c, "ok", permissions)
 }
@@ -35,14 +36,14 @@ func (p *PermissionController) Create(c *gin.Context) {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	model.DB.Create(&permission)
+	db.Sql.Create(&permission)
 	response.Send(c, "ok", permission)
 }
 
 func (p *PermissionController) Update(c *gin.Context) {
 	id := c.Param("id")
 	var permission model.Permission
-	if err := model.DB.Where("permission_id=?", id).First(&permission).Error; err != nil {
+	if err := db.Sql.Where("permission_id=?", id).First(&permission).Error; err != nil {
 
 		response.SendError(c, "not found", nil)
 		return
@@ -51,17 +52,17 @@ func (p *PermissionController) Update(c *gin.Context) {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	model.DB.Save(&permission)
+	db.Sql.Save(&permission)
 	response.Send(c, "ok", permission)
 }
 
 func (p *PermissionController) Delete(c *gin.Context) {
 	id := c.Param("id")
 	var permission model.Permission
-	if err := model.DB.Where("permission_id=?", id).First(&permission).Error; err != nil {
+	if err := db.Sql.Where("permission_id=?", id).First(&permission).Error; err != nil {
 		response.SendError(c, "not found", nil)
 		return
 	}
-	model.DB.Delete(&permission)
+	db.Sql.Delete(&permission)
 	response.Send(c, "ok", permission)
 }

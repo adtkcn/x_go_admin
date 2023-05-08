@@ -2,6 +2,7 @@ package system
 
 import (
 	"errors"
+	"x-gin-admin/db"
 	"x-gin-admin/model"
 	"x-gin-admin/utils/jwt"
 
@@ -13,7 +14,7 @@ type UserService struct{}
 // 返回token
 func (u *UserService) Login(username, password string) (string, error) {
 	var user model.User
-	result := model.DB.First(&user, "user_name = ?", username)
+	result := db.Sql.First(&user, "user_name = ?", username)
 	if result.Error != nil {
 		// c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid username or password"})
 		// response.SendError(c, "invalid username or password", nil)
@@ -47,7 +48,7 @@ func (u *UserService) GetUserInfo(UserID int) *model.User {
 	var users = model.User{
 		UserID: UserID,
 	}
-	model.DB.Find(&users)
+	db.Sql.Find(&users)
 
 	return &users
 }

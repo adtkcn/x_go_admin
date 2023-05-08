@@ -9,17 +9,16 @@ import (
 
 func UseAdmin(r *gin.RouterGroup) {
 	user := system.UserController{}
-
 	r.POST("user/Register", user.Register)
 	r.POST("user/Login", user.Login)
 
 	captcha := system.CaptchaController{}
 	r.GET("captcha/Generate", captcha.Generate)
 
-	common := system.CommonController{}
-	r.POST("common/upload", handler.CalculateFileMD5(), common.Upload)
-	r.GET("common/FileByID", common.FileByID)
-	r.GET("common/CopyWithMd5", common.CopyWithMd5)
+	file := system.FileController{}
+	r.POST("file/Upload", handler.CalculateFileMD5(), file.Upload)
+	r.GET("file/FileByID", file.FileByID)
+	r.GET("file/UploadWithMd5", file.UploadWithMd5)
 
 	menu := system.MenuController{}
 	permission := system.PermissionController{}

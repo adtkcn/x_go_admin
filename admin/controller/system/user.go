@@ -2,6 +2,7 @@ package system
 
 import (
 	"x-gin-admin/admin/service/system"
+	"x-gin-admin/db"
 	"x-gin-admin/model"
 	"x-gin-admin/utils/captcha"
 	"x-gin-admin/utils/jwt"
@@ -34,7 +35,7 @@ func (u *UserController) Register(c *gin.Context) {
 	user.Password = string(passwordHash)
 
 	// 将用户实体存储到数据库中
-	result := model.DB.Create(&user)
+	result := db.Sql.Create(&user)
 	if result.Error != nil {
 		response.SendError(c, result.Error.Error(), nil)
 		return
@@ -99,7 +100,7 @@ func (u *UserController) GetUsers(c *gin.Context) {
 func (u *UserController) UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 	var user model.User
-	if err := model.DB.Where("user_id=?", id).First(&user).Error; err != nil {
+	if err := db.Sql.Where("user_id=?", id).First(&user).Error; err != nil {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
@@ -107,7 +108,7 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	model.DB.Save(&user)
+	db.Sql.Save(&user)
 
 	response.Send(c, "ok", user)
 }
@@ -115,10 +116,10 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 func (u *UserController) DeleteUser(c *gin.Context) {
 	user_id := c.Param("user_id")
 	var user model.User
-	if err := model.DB.Where("user_id=?", user_id).First(&user).Error; err != nil {
+	if err := db.Sql.Where("user_id=?", user_id).First(&user).Error; err != nil {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	model.DB.Delete(&user)
+	db.Sql.Delete(&user)
 	response.Send(c, "ok", user)
 }
