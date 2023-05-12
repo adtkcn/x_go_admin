@@ -11,6 +11,7 @@ func main() {
 
 	server := router.Group("/server")
 	{
+		routes.UsePublic(server)
 		routes.UseAdmin(server)
 	}
 	router.Static("public", "./public")

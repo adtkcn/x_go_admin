@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"errors"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -24,6 +25,7 @@ type MyCustomClaims struct {
 	// exp    int64
 	// iat    int64
 	// nbf    int64
+	// ExpiresAt  jwt.NewNumericDate(time.Now().Add(time.Hour))
 	jwt.RegisteredClaims
 }
 
@@ -38,6 +40,10 @@ func GenerateToken(userId int) (string, error) {
 	// 创建私有声明
 	claims := MyCustomClaims{
 		UserID: userId,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 30)), //一个月
+		},
+
 		// exp:    expirationTime.Unix(),
 		// iat:    time.Now().Unix(),
 		// nbf:    time.Now().Unix(),
