@@ -93,7 +93,7 @@ func (u *UserController) GetUsers(c *gin.Context) {
 		response.SendError(c, "失败", nil)
 		return
 	}
-	var users = userService.GetUserInfo(UserID)
+	var users = userService.FindOne(UserID)
 	response.Send(c, "ok", users)
 }
 

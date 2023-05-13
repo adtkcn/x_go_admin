@@ -47,7 +47,7 @@ func GetUserInfo() gin.HandlerFunc {
 			return
 		}
 		// 从mysql获取的，后续改为redis等缓存
-		user := userService.GetUserInfo(UserID)
+		user := userService.FindOne(UserID)
 		if user == nil {
 			c.Abort()
 			response.SendError(c, "获取用户失败", nil)

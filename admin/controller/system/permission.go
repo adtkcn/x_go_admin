@@ -31,12 +31,16 @@ func (p *PermissionController) List(c *gin.Context) {
 
 func (p *PermissionController) Create(c *gin.Context) {
 	var permission model.Permission
-	if err := c.ShouldBindJSON(&permission); err != nil {
+	if err := c.ShouldBind(&permission); err != nil {
 
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	db.Sql.Create(&permission)
+	err := db.Sql.Create(&permission).Error
+	if err != nil {
+		response.SendError(c, err.Error(), nil)
+		return
+	}
 	response.Send(c, "ok", permission)
 }
 
@@ -48,7 +52,7 @@ func (p *PermissionController) Update(c *gin.Context) {
 		response.SendError(c, "not found", nil)
 		return
 	}
-	if err := c.ShouldBindJSON(&permission); err != nil {
+	if err := c.ShouldBind(&permission); err != nil {
 		response.SendError(c, err.Error(), nil)
 		return
 	}

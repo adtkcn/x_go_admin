@@ -12,4 +12,6 @@ func UseRole(r *gin.RouterGroup) {
 	r.POST("role/Create", role.Create)
 	r.POST("role/Update", role.Update)
 	r.POST("role/Delete", role.Delete)
+
+	r.GET("role/FindOne", role.FindOne)
 }

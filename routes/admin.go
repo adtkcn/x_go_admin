@@ -14,7 +14,13 @@ func UseAdmin(r *gin.RouterGroup) {
 	 */
 	adminRoute := r.Group("/admin", handler.GetUserId())
 	admin.UseUser(adminRoute)
-	admin.UseRole(adminRoute)
+	admin.UseUserRole(adminRoute)
+
 	admin.UseMenu(adminRoute)
 	admin.UsePermission(adminRoute)
+
+	admin.UseRole(adminRoute)
+	admin.UseRoleMenu(adminRoute)
+	admin.UseRolePermission(adminRoute)
+
 }

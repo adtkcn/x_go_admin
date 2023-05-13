@@ -38,7 +38,7 @@ func (u *UserService) Login(username, password string) (string, error) {
 }
 
 // 用户相关信息
-func (u *UserService) GetUserInfo(UserID int) *model.User {
+func (u *UserService) FindOne(UserID int) *model.User {
 	if UserID == 0 {
 		return nil
 	}

@@ -21,6 +21,10 @@ type User struct {
 type Role struct {
 	RoleID   int    `gorm:"primaryKey;autoIncrement;not null" json:"role_id" form:"role_id"`
 	RoleName string `gorm:"not null;uniqueIndex;size:50;comment:角色名称" json:"role_name" form:"role_name"`
+	// RoleKey   string `gorm:"not null;uniqueIndex;size:50;comment:角色唯一标识" json:"role_key" form:"role_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 // 用户的角色
@@ -34,6 +38,9 @@ type Permission struct {
 	PermissionID   int    `gorm:"primaryKey;autoIncrement;not null" json:"permission_id" form:"permission_id"`
 	PermissionName string `gorm:"not null;size:50;comment:权限名称" json:"permission_name" form:"permission_name"`
 	PermissionKey  string `gorm:"not null;uniqueIndex;size:50;comment:权限唯一标识" json:"permission_key" form:"permission_key"`
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      gorm.DeletedAt `gorm:"index"`
 }
 
 // 角色的权限
@@ -60,12 +67,17 @@ type Menu struct {
 	IsFull      int    `gorm:"default:0;size:1;comment:是否全屏(示例：数据大屏页面)" json:"isFull" form:"isFull"`
 	IsAffix     int    `gorm:"default:0;size:1;comment:是否固定在 tabs nav" json:"isAffix" form:"isAffix"`
 	IsKeepAlive int    `gorm:"default:1;size:1;comment:是否缓存" json:"isKeepAlive" form:"isKeepAlive"`
-}
-type Menus []Menu
 
-func (a Menus) Len() int           { return len(a) }
-func (a Menus) Less(i, j int) bool { return a[i].Index > a[j].Index }
-func (a Menus) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
+// sort.Sort 排序
+// type Menus []Menu
+// func (a Menus) Len() int           { return len(a) }
+// func (a Menus) Less(i, j int) bool { return a[i].Index > a[j].Index }
+// func (a Menus) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 
 // 角色的菜单
 type RoleMenu struct {

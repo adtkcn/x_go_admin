@@ -1,7 +1,6 @@
 package system
 
 import (
-	"sort"
 	"x-gin-admin/db"
 	"x-gin-admin/model"
 	"x-gin-admin/utils/response"
@@ -47,9 +46,9 @@ func buildTree(menus []Route, parentID int) []Route {
 
 // 获取用户的菜单
 func (m *MenuController) GetMenusByUser(c *gin.Context) {
-	var menus model.Menus
-	db.Sql.Find(&menus)
-	sort.Sort(model.Menus(menus))
+	var menus []model.Menu
+	db.Sql.Order("index desc").Find(&menus)
+	// sort.Sort(model.Menus(menus))
 
 	var routes []Route
 	for i := 0; i < len(menus); i++ {
@@ -79,8 +78,8 @@ func (m *MenuController) GetMenusByUser(c *gin.Context) {
 // 菜单相关操作
 func (m *MenuController) List(c *gin.Context) {
 	var menus []model.Menu
-	db.Sql.Find(&menus)
-	sort.Sort(model.Menus(menus))
+	db.Sql.Order("index desc").Find(&menus)
+	// sort.Sort(model.Menus(menus))
 	response.Send(c, "ok", &menus)
 	// response.Send(c, "ok", buildTree(menus, 0))
 }
@@ -88,7 +87,6 @@ func (m *MenuController) List(c *gin.Context) {
 func (m *MenuController) Create(c *gin.Context) {
 	var menu model.Menu
 	if err := c.ShouldBind(&menu); err != nil {
-		// c.JSON(400, gin.H{"error": err.Error()})
 		response.SendError(c, err.Error(), nil)
 		return
 	}
