@@ -1,6 +1,6 @@
 package model
 
-type BaseQueryParams struct {
+type BaseQuery struct {
 	Key      string `form:"key"`
 	Page     int    `form:"page"`
 	PageSize int    `form:"pageSize"`

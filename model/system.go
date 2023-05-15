@@ -27,12 +27,6 @@ type Role struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
-// 用户的角色
-type UserRole struct {
-	UserID int `gorm:"primaryKey;not null" json:"user_id" form:"user_id"`
-	RoleID int `gorm:"primaryKey;not null" json:"role_id" form:"role_id"`
-}
-
 // 权限
 type Permission struct {
 	PermissionID   int    `gorm:"primaryKey;autoIncrement;not null" json:"permission_id" form:"permission_id"`
@@ -41,12 +35,6 @@ type Permission struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	DeletedAt      gorm.DeletedAt `gorm:"index"`
-}
-
-// 角色的权限
-type RolePermission struct {
-	RoleID       int `gorm:"primaryKey;not null;comment:角色id" json:"role_id" form:"role_id"`
-	PermissionID int `gorm:"primaryKey;not null;comment:权限id" json:"permission_id" form:"permission_id"`
 }
 
 // 菜单
@@ -78,6 +66,18 @@ type Menu struct {
 // func (a Menus) Len() int           { return len(a) }
 // func (a Menus) Less(i, j int) bool { return a[i].Index > a[j].Index }
 // func (a Menus) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+
+// 用户的角色
+type UserRole struct {
+	UserID int `gorm:"primaryKey;not null" json:"user_id" form:"user_id"`
+	RoleID int `gorm:"primaryKey;not null" json:"role_id" form:"role_id"`
+}
+
+// 角色的权限
+type RolePermission struct {
+	RoleID       int `gorm:"primaryKey;not null;comment:角色id" json:"role_id" form:"role_id"`
+	PermissionID int `gorm:"primaryKey;not null;comment:权限id" json:"permission_id" form:"permission_id"`
+}
 
 // 角色的菜单
 type RoleMenu struct {

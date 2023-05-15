@@ -7,33 +7,42 @@ import (
 
 type UserRoleService struct{}
 
+var rolePermissionService = RolePermissionService{}
+var menuService = RoleMenuService{}
+
 // 获取用户的角色
-func (u *UserRoleService) FindByUserId(UserID int) (list *[]model.UserRole, err error) {
-	err = db.Sql.Model(&model.UserRole{}).Where("user_id = ?", UserID).Find(&list).Error
+func (u *UserRoleService) FindByUserId(UserID int) (list []model.Role, RoleIds []int, err error) {
+	err = db.Sql.Model(&model.Role{}).Joins("left join x_user_roles on x_user_roles.role_id = x_roles.role_id").Where("x_user_roles.user_id = ?", UserID).Find(&list).Error
 
 	if err != nil {
-		return list, err
+		return list, RoleIds, err
 	}
 
-	return list, err
-}
-
-type result struct {
-	UserID       int
-	RoleID       int
-	PermissionID int
+	for i := 0; i < len(list); i++ {
+		RoleIds = append(RoleIds, list[i].RoleID)
+	}
+	return list, RoleIds, err
 }
 
 // 获取用户的角色和权限
-func (u *UserRoleService) FindUserPermissionByUserId(UserID int) (res result, err error) {
-	// var userRole *[]model.UserRole
+func (u *UserRoleService) FindUserPermissionByUserId(UserID int) (res map[string]interface{}, err error) {
 
-	// var res result
-	err = db.Sql.Model(&model.UserRole{}).Joins("left join x_role_permissions on x_role_permissions.role_id = x_user_roles.role_id").Where("user_id = ?", UserID).Scan(&res).Error
-
+	Roles, RoleIds, err := u.FindByUserId(UserID)
 	if err != nil {
 		return res, err
 	}
+	permission, permissionIds, _ := rolePermissionService.FindByRoleIds(RoleIds)
+	if err != nil {
+		return res, err
+	}
+	menu, menuIds, _ := menuService.FindByRoleIds(RoleIds)
 
-	return res, err
+	return map[string]interface{}{
+		"Roles":         Roles,
+		"RoleIds":       RoleIds,
+		"permission":    permission,
+		"permissionIds": permissionIds,
+		"menu":          menu,
+		"menuIds":       menuIds,
+	}, err
 }

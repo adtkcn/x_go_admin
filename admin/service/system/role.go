@@ -16,7 +16,7 @@ func (s *RoleService) FindOne(id string) (role *model.Role, err error) {
 	}
 	return role, nil
 }
-func (s *RoleService) FindByPage(params model.BaseQueryParams, where map[string]interface{}) (role *gin.H, err error) {
+func (s *RoleService) FindByPage(params model.BaseQuery, where map[string]interface{}) (role *gin.H, err error) {
 	query := db.Sql.Model(&model.Role{}).Where(where)
 	if params.Key != "" {
 		query = query.Where("role_name LIKE ?", "%"+params.Key+"%")
@@ -24,8 +24,8 @@ func (s *RoleService) FindByPage(params model.BaseQueryParams, where map[string]
 
 	var count int64
 	var list []model.Role
-	offset := (params.Page - 1) * params.PageSize
-	err = query.Offset(offset).Limit(params.PageSize).Count(&count).Find(&list).Error
+	// offset := (params.Page - 1) * params.PageSize
+	err = query.Count(&count).Scopes(db.Paginate(params)).Find(&list).Error
 	if err != nil {
 		return nil, err
 	}

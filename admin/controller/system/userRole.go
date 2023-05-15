@@ -65,7 +65,7 @@ func (u *UserRoleController) GetRoleByUserId(c *gin.Context) {
 		response.SendError(c, "未指定用户", nil)
 		return
 	}
-	list, err := userRoleService.FindByUserId(userRole.UserID)
+	list, _, err := userRoleService.FindByUserId(userRole.UserID)
 
 	// var list []model.UserRole
 	// err := db.Sql.Model(&model.Role{}).Where("role_id = ?", userRole.UserID).Find(&list).Error

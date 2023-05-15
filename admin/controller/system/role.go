@@ -14,7 +14,7 @@ type RoleController struct{}
 var roleService = system.RoleService{}
 
 func (u *RoleController) List(c *gin.Context) {
-	var params model.BaseQueryParams
+	var params model.BaseQuery
 	if err := c.ShouldBindQuery(&params); err != nil {
 		response.SendError(c, err.Error(), nil)
 		return

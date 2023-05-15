@@ -32,6 +32,7 @@ func init() {
 			TablePrefix: "x_",
 		},
 	})
+
 	if err != nil {
 		panic(err)
 	}
@@ -49,5 +50,24 @@ func init() {
 	)
 	if err != nil {
 		panic(err)
+	}
+}
+func Paginate(params model.BaseQuery) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		page := params.Page
+		pageSize := params.PageSize
+
+		if page <= 0 {
+			page = 1
+		}
+		switch {
+		case pageSize > 100:
+			pageSize = 100
+		case pageSize <= 0:
+			pageSize = 10
+		}
+
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
 	}
 }
