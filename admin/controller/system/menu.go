@@ -1,6 +1,7 @@
 package system
 
 import (
+	"fmt"
 	"x-gin-admin/db"
 	"x-gin-admin/model"
 	"x-gin-admin/utils/response"
@@ -27,7 +28,7 @@ type Route struct {
 	Children  []Route `json:"children"`
 	ParentID  int
 	MenuID    int
-	Index     int `json:"index"`
+	SortOrder int `json:"sort_order"`
 }
 
 func buildTree(menus []Route, parentID int) []Route {
@@ -47,7 +48,7 @@ func buildTree(menus []Route, parentID int) []Route {
 // 获取用户的菜单
 func (m *MenuController) GetMenusByUser(c *gin.Context) {
 	var menus []model.Menu
-	db.Sql.Order("index desc").Find(&menus)
+	db.Sql.Order("sort_order desc").Find(&menus)
 	// sort.Sort(model.Menus(menus))
 
 	var routes []Route
@@ -58,7 +59,7 @@ func (m *MenuController) GetMenusByUser(c *gin.Context) {
 			Component: menus[i].Component,
 			ParentID:  menus[i].ParentID,
 			MenuID:    menus[i].MenuID,
-			Index:     menus[i].Index,
+			SortOrder: menus[i].SortOrder,
 			Meta: Meta{
 				Icon:        menus[i].Icon,
 				Title:       menus[i].Title,
@@ -78,7 +79,7 @@ func (m *MenuController) GetMenusByUser(c *gin.Context) {
 // 菜单相关操作
 func (m *MenuController) List(c *gin.Context) {
 	var menus []model.Menu
-	db.Sql.Order("index desc").Find(&menus)
+	db.Sql.Order("sort_order desc").Find(&menus)
 	// sort.Sort(model.Menus(menus))
 	response.Send(c, "ok", &menus)
 	// response.Send(c, "ok", buildTree(menus, 0))
@@ -95,17 +96,20 @@ func (m *MenuController) Create(c *gin.Context) {
 }
 
 func (m *MenuController) Update(c *gin.Context) {
-	id := c.PostForm("menu_id")
+	// id := c.PostForm("menu_id")
+	// fmt.Println("menu_id %#v", c)
 	var menu model.Menu
-	if err := db.Sql.Where("menu_id=?", id).First(&menu).Error; err != nil {
-		response.SendError(c, "Menu not found", nil)
-		return
-	}
-	if err := c.ShouldBind(&menu); err != nil {
+	// if err := db.Sql.Where("menu_id=?", id).First(&menu).Error; err != nil {
+	// 	response.SendError(c, "Menu not found", nil)
+	// 	return
+	// }
 
+	if err := c.ShouldBind(&menu); err != nil {
+		fmt.Println(err)
 		response.SendError(c, err.Error(), nil)
 		return
 	}
+	fmt.Printf("%#v", &menu)
 	db.Sql.Save(&menu)
 	response.Send(c, "ok", &menu)
 }

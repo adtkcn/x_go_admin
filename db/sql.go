@@ -42,7 +42,7 @@ func init() {
 		&model.User{},
 		&model.Role{},
 		&model.UserRole{},
-		&model.Permission{},
+		// &model.Permission{},
 		&model.RolePermission{},
 		&model.Menu{},
 		&model.RoleMenu{},

@@ -7,7 +7,7 @@ import (
 
 type UserRoleService struct{}
 
-var rolePermissionService = RolePermissionService{}
+// var rolePermissionService = RolePermissionService{}
 var menuService = RoleMenuService{}
 
 // 获取用户的角色
@@ -31,18 +31,18 @@ func (u *UserRoleService) FindUserPermissionByUserId(UserID int) (res map[string
 	if err != nil {
 		return res, err
 	}
-	permission, permissionIds, _ := rolePermissionService.FindByRoleIds(RoleIds)
+	// permission, permissionIds, _ := rolePermissionService.FindByRoleIds(RoleIds)
 	if err != nil {
 		return res, err
 	}
 	menu, menuIds, _ := menuService.FindByRoleIds(RoleIds)
 
 	return map[string]interface{}{
-		"Roles":         Roles,
-		"RoleIds":       RoleIds,
-		"permission":    permission,
-		"permissionIds": permissionIds,
-		"menu":          menu,
-		"menuIds":       menuIds,
+		"Roles":   Roles,
+		"RoleIds": RoleIds,
+		// "permission":    permission,
+		// "permissionIds": permissionIds,
+		"menu":    menu,
+		"menuIds": menuIds,
 	}, err
 }

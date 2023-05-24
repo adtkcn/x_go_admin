@@ -28,20 +28,20 @@ type Role struct {
 }
 
 // 权限
-type Permission struct {
-	PermissionID   int    `gorm:"primaryKey;autoIncrement;not null" json:"permission_id" form:"permission_id"`
-	PermissionName string `gorm:"not null;size:50;comment:权限名称" json:"permission_name" form:"permission_name"`
-	PermissionKey  string `gorm:"not null;uniqueIndex;size:50;comment:权限唯一标识" json:"permission_key" form:"permission_key"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedAt      gorm.DeletedAt `gorm:"index"`
-}
+// type Permission struct {
+// 	PermissionID   int    `gorm:"primaryKey;autoIncrement;not null" json:"permission_id" form:"permission_id"`
+// 	PermissionName string `gorm:"not null;size:50;comment:权限名称" json:"permission_name" form:"permission_name"`
+// 	PermissionKey  string `gorm:"not null;uniqueIndex;size:50;comment:权限唯一标识" json:"permission_key" form:"permission_key"`
+// 	CreatedAt      time.Time
+// 	UpdatedAt      time.Time
+// 	DeletedAt      gorm.DeletedAt `gorm:"index"`
+// }
 
 // 菜单
 type Menu struct {
-	MenuID   int `gorm:"primaryKey;autoIncrement;not null" json:"menu_id" form:"menu_id"`
-	ParentID int `gorm:"default:0;comment:父级" json:"parent_id" form:"parent_id"`
-	Index    int `gorm:"default:0;comment:排序" json:"index" form:"index"`
+	MenuID    int `gorm:"primaryKey;autoIncrement;not null" json:"menu_id" form:"menu_id"`
+	ParentID  int `gorm:"default:0;comment:父级" json:"parent_id" form:"parent_id"`
+	SortOrder int `gorm:"default:0;index;size:4;comment:排序" json:"sort_order" form:"sort_order"`
 
 	Path      string `gorm:"default:'';size:500;comment:路由路径" json:"path" form:"path"`
 	Name      string `gorm:"default:'';size:50;comment:路由名称" json:"name" form:"name" `
@@ -56,9 +56,11 @@ type Menu struct {
 	IsAffix     int    `gorm:"default:0;size:1;comment:是否固定在 tabs nav" json:"isAffix" form:"isAffix"`
 	IsKeepAlive int    `gorm:"default:1;size:1;comment:是否缓存" json:"isKeepAlive" form:"isKeepAlive"`
 
+	// Permission string `gorm:"default:'';index;size:50;comment:权限唯一标识" json:"permission" form:"permission"`
+
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 // sort.Sort 排序
