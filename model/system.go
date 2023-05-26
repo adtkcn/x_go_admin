@@ -14,7 +14,7 @@ type User struct {
 	Avatar    string `gorm:"default:'';size:200" json:"avatar" form:"avatar"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 // 角色
@@ -24,7 +24,7 @@ type Role struct {
 	// RoleKey   string `gorm:"not null;uniqueIndex;size:50;comment:角色唯一标识" json:"role_key" form:"role_key"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 // 权限

@@ -54,11 +54,11 @@ func init() {
 }
 func Paginate(params model.BaseQuery) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		page := params.Page
+		pageNum := params.PageNum
 		pageSize := params.PageSize
 
-		if page <= 0 {
-			page = 1
+		if pageNum <= 0 {
+			pageNum = 1
 		}
 		switch {
 		case pageSize > 100:
@@ -67,7 +67,7 @@ func Paginate(params model.BaseQuery) func(db *gorm.DB) *gorm.DB {
 			pageSize = 10
 		}
 
-		offset := (page - 1) * pageSize
+		offset := (pageNum - 1) * pageSize
 		return db.Offset(offset).Limit(pageSize)
 	}
 }

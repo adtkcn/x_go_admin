@@ -1,6 +1,7 @@
 package system
 
 import (
+	"fmt"
 	"x-gin-admin/admin/service/system"
 	"x-gin-admin/db"
 	"x-gin-admin/model"
@@ -16,6 +17,7 @@ var userService = system.UserService{}
 
 type UserController struct{}
 
+// 注册
 func (u *UserController) Register(c *gin.Context) {
 	// 解析请求体中的表单数据
 	var user = model.User{}
@@ -86,7 +88,7 @@ func (u *UserController) Logout(c *gin.Context) {
 	response.Send(c, "已退出登录", nil)
 }
 
-// 用户相关操作
+// 获取用户信息
 func (u *UserController) GetUsers(c *gin.Context) {
 	var UserID = c.GetInt("UserID")
 	if UserID == 0 {
@@ -97,24 +99,66 @@ func (u *UserController) GetUsers(c *gin.Context) {
 	response.Send(c, "ok", users)
 }
 
-func (u *UserController) UpdateUser(c *gin.Context) {
-	id := c.Param("id")
-	var user model.User
-	if err := db.Sql.Where("user_id=?", id).First(&user).Error; err != nil {
+func (u *UserController) List(c *gin.Context) {
+	var params model.BaseQuery
+	if err := c.ShouldBindQuery(&params); err != nil {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	if err := c.ShouldBindJSON(&user); err != nil {
+	where := map[string]interface{}{}
+	list, err := userService.FindByPage(params, where)
+	if err != nil {
 		response.SendError(c, err.Error(), nil)
 		return
 	}
-	db.Sql.Save(&user)
-
-	response.Send(c, "ok", user)
+	response.Send(c, "获取成功", list)
 }
 
-func (u *UserController) DeleteUser(c *gin.Context) {
-	user_id := c.Param("user_id")
+func (m *UserController) Create(c *gin.Context) {
+	var user model.User
+	if err := c.ShouldBind(&user); err != nil {
+		response.SendError(c, err.Error(), nil)
+		return
+	}
+	// 将密码加密存储到数据库中
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		response.SendError(c, "failed to generate password hash", nil)
+		return
+	}
+	// 创建用户实体
+	user.Password = string(passwordHash)
+
+	err = db.Sql.Create(&user).Error
+	if err != nil {
+		response.SendError(c, err.Error(), nil)
+		return
+	}
+	response.Send(c, "ok", &user)
+}
+func (u *UserController) Update(c *gin.Context) {
+	id := c.PostForm("user_id")
+	var user model.User
+	if err := db.Sql.Where("user_id=?", id).First(&user).Error; err != nil {
+		fmt.Println(err.Error())
+		response.SendError(c, "未找到用户", nil)
+		return
+	}
+	if err := c.ShouldBind(&user); err != nil {
+		response.SendError(c, err.Error(), nil)
+		return
+	}
+
+	err := db.Sql.Omit("password").Save(&user).Error
+	if err != nil {
+		response.SendError(c, err.Error(), nil)
+		return
+	}
+	response.Send(c, "ok", &user)
+}
+
+func (u *UserController) Delete(c *gin.Context) {
+	user_id := c.PostForm("user_id")
 	var user model.User
 	if err := db.Sql.Where("user_id=?", user_id).First(&user).Error; err != nil {
 		response.SendError(c, err.Error(), nil)

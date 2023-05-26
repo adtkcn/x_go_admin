@@ -30,8 +30,10 @@ func (s *RoleService) FindByPage(params model.BaseQuery, where map[string]interf
 		return nil, err
 	}
 	return &gin.H{
-		"count": count,
-		"list":  &list,
+		"pageNum":  params.PageNum,
+		"pageSize": params.PageSize,
+		"count":    count,
+		"list":     &list,
 	}, nil
 }
 

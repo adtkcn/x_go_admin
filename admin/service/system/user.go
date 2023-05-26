@@ -6,6 +6,7 @@ import (
 	"x-gin-admin/model"
 	"x-gin-admin/utils/jwt"
 
+	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -51,4 +52,30 @@ func (u *UserService) FindOne(UserID int) *model.User {
 	db.Sql.Find(&users)
 
 	return &users
+}
+
+func (s *UserService) FindByPage(params model.BaseQuery, where map[string]interface{}) (role *gin.H, err error) {
+	query := db.Sql.Model(&model.User{}).Where(where)
+	if params.Key != "" {
+		query = query.Where("user_name LIKE ?", "%"+params.Key+"%")
+	}
+
+	var count int64
+	var list []model.User
+	// offset := (params.Page - 1) * params.PageSize
+	err = query.Select("user_id", "user_name", "avatar", "created_at", "updated_at").Count(&count).Scopes(db.Paginate(params)).Find(&list).Error
+	if err != nil {
+		return nil, err
+	}
+	return &gin.H{
+		"pageNum":  params.PageNum,
+		"pageSize": params.PageSize,
+		"count":    count,
+		"list":     &list,
+	}, nil
+}
+
+func (s *UserService) DeleteById(id string) (err error) {
+	err = db.Sql.Delete(&model.Role{}, id).Error
+	return err
 }
